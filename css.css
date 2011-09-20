@@ -1,0 +1,29 @@
+.deck-container h1 sub {
+	display: block;
+	line-height: 1.25em;
+}
+
+.deck-container .bottom-right * {
+	vertical-align: top;
+	text-align: right;
+}
+
+.deck-container .bottom-right dt {
+	width: 25%;
+	display: inline-block;
+	padding-right:  10px;
+	width: 50%;
+}
+
+.deck-container .bottom-right dd {
+	text-align: left;
+	display: inline-block;
+	width: 15%;
+}
+
+.bottom-right {
+	width: 50%;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+}

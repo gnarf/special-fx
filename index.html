@@ -12,7 +12,7 @@
 </head>
 <body class="deck-container">
 
-<div class="slide">
+<div class="slide" id="start">
 	<h1>
 		Special.fx()
 		<sub>A review of jQuery animation one requestAnimationFrame at a time</sub>
@@ -27,8 +27,8 @@
 	</div>
 </div>
 
-<div class="slide" id="api">
-	<h2>API Components</h2>
+<div class="slide" id="overview">
+	<h2>API Overview</h2>
 	<ul>
 		<li>
 			<h3>jQuery Core</h3>
@@ -49,8 +49,115 @@
 	</ul>
 </div>
 
+<div class="slide" id="queue-intro">
+	<h1>
+		queue.js
+		<sub>Simple Queues</sub>
+	</h1>
+	<div class="bottom-right">
+		<h3>jQuery Core</h3>
+		<h4>/src/queue.js</h4>
+	</div>
+</div>
+
+<div class="slide" id="what-is-a-queue">
+	<h2>What is a queue?</h2>
+	<ul>
+		<li>Stored per Element or Object
+			<ul><li>Uses jQuery internal data cache</li></ul>
+		</li>
+		<li>Stores Functions</li>
+		<li>First in, First Out</li>
+		<li>Has uses other than animation</li>
+	</ul>
+	<h2>Queues have names</h2>
+	<ul>
+		<li>
+			The default is <code>"fx"</code>
+			<ul>
+				<li>Automatically starts</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+<div class="slide" id="fn-queue">
+	<h2>Queue</h2>
+	<p>Add a function to the end of the queue</p>
+	<code>jQuery.fn.queue( [ name, ] queueFunc( next ) )</code>
+	<ul>
+		<li><code>queueFunc( next )</code> is passed a function to call when you are done</li>
+		<li>Automatically starts the <code>"fx"</code> queue</li>
+		<li>Internally it calls....</li>
+	</ul>
+	<code>jQuery.queue( elem, name, data )</code>
+	<ul>
+		<li>Stores the function on the end of the queue</li>
+		<li>Can accept an array of functions - in which case it overwrites the queue</li>
+		<li>Accepts no data to retrieve the queue</li>
+	</ul>
+</div>
+
+<div class="slide" id="fn-dequeue">
+	<h2>Dequeue</h2>
+	<p>Run the first function stored the queue</p>
+	<code>jQuery.fn.dequeue( [ name ] )</code>
+	<ul>
+		<li>Just passes all the work to...</li>
+	</ul>
+	<code>jQuery.dequeue( elem, [ name ] )</code>
+	<ul>
+		<li><code>shift()</code>'s a function off the queue</li>
+		<li>Executes your function, passing a function to call <code>jQuery.dequeue()</code></li>
+	</ul>
+<pre class="textmate-source cobalt"><span class="source source_js">fn<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span><span class="support support_function support_function_js">call</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> elem<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="attention"><span class="storage storage_type storage_type_js">function</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">()</span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+    jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>dequeue<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> elem<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>type <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+<span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span></span><span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span></span></pre>
+</div>
+
+<div class="slide" id="queue-example">
+	<h2>Example Queue Function</h2>
+	<p>A good example already in <code>queue.js</code></p>
+	<code>jQuery.fn.delay( time, [ type ] )</code>
+<pre class="textmate-source cobalt"><span class="source source_js"><span class="meta meta_function meta_function_json meta_function_json_js"><span class="entity entity_name entity_name_function entity_name_function_js">delay</span>: <span class="storage storage_type storage_type_function storage_type_function_js">function</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_begin punctuation_definition_parameters_begin_js">(</span><span class="variable variable_parameter variable_parameter_function variable_parameter_function_js"> time, type </span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_end punctuation_definition_parameters_end_js">)</span></span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+    time <span class="keyword keyword_operator keyword_operator_js">=</span> jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>fx ? jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>speeds<span class="meta meta_brace meta_brace_square meta_brace_square_js">[</span> time <span class="meta meta_brace meta_brace_square meta_brace_square_js">]</span> <span class="keyword keyword_operator keyword_operator_js">||</span> time : time<span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+    type <span class="keyword keyword_operator keyword_operator_js">=</span> type <span class="keyword keyword_operator keyword_operator_js">||</span> <span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>fx<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+
+    <span class="keyword keyword_control keyword_control_js">return</span> <span class="variable variable_language variable_language_js">this</span><span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>queue<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> type<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="storage storage_type storage_type_js">function</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> next <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+        <span class="support support_function support_function_js">setTimeout</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> next<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>time <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+    <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+<span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span>
+</span></pre>
+	<p>More on <code>jQuery.fx.speeds</code> later</p>
+</div>
+
+<div class="slide" id="queue-promise">
+	<h2>Clearing the Queue</h2>
+	<code>$.fn.clearQueue( [ type ] )</code>
+	<ul><li>Simply calls <code>$.fn.queue( type, [] )</code></li></ul>
+	<h2>Queues give promises too</h2>
+	<code>$.fn.promise( [ type ] )</code>
+	<ul>
+		<li>Creates a <code>$.Deferred()</code> that will resolve when the queue <code>type</code> empties.</li>
+	</ul>
+</div>
+
+<div class="slide" id="effects-intro">
+	<h1>
+		effects.js
+		<sub>Timers &amp; Animations</sub>
+	</h1>
+	<div class="bottom-right">
+		<h3>jQuery Core</h3>
+		<h4>/src/effects.js</h4>
+	</div>
+</div>
+
+
+<a href="." title="Permalink to this slide" class="deck-permalink">#</a>
 <script src="jquery.min.js"></script>
 <script src="deck.js/core/deck.core.js"></script>
+<script src="deck.js/extensions/hash/deck.hash.js"></script>
 <script>
 	$(function() {
 		$.deck('.slide');

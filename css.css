@@ -1,6 +1,11 @@
 .deck-container h1 sub {
 	display: block;
 	line-height: 1.25em;
+	font-size: 45%;
+}
+
+.deck-container code {
+  color: #E3B64B;
 }
 
 .deck-container .bottom-right * {
@@ -26,4 +31,268 @@
 	position: absolute;
 	bottom: 0;
 	right: 0;
+}
+
+pre.textmate-source .attention {
+	background-color: #183F7E;
+}
+
+/* Textmate Cobalt Theme */
+pre.textmate-source {
+	margin: 1em 0;
+	padding: 5px;
+	border-radius: 5px;
+	font-family: "Bitstream Vera Sans Mono", monospace;
+	font-size: 13px;
+	line-height: 1.3em;
+	word-wrap: break-word;
+	white-space: pre;
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -o-pre-wrap;
+}
+
+pre.textmate-source.cobalt {
+	color: #FFFFFF;
+	background-color: #002240;
+}
+
+pre.textmate-source .linenum {
+	width: 75px;
+	padding: 0.1em 1em 0.2em 0;
+	color: #888;
+	background-color: #eee;
+}
+pre.textmate-source.cobalt span {
+   padding-top: 0.2em;
+   padding-bottom: 0.1em;
+}
+pre.textmate-source.cobalt ::selection {
+	background-color: rgba(179, 101, 57, 0.75);
+}
+/* Punctuation */
+pre.textmate-source.cobalt .punctuation .- .(punctuation_definition_string .| .punctuation_definition_comment) {
+	color: #E1EFFF;
+}
+
+/* Constant */
+pre.textmate-source.cobalt .constant {
+	color: #FF628C;
+}
+
+/* Entity */
+pre.textmate-source.cobalt .entity {
+	color: #FFDD00;
+}
+
+/* Keyword */
+pre.textmate-source.cobalt .keyword {
+	color: #FF9D00;
+}
+
+/* Storage */
+pre.textmate-source.cobalt .storage {
+	color: #FFEE80;
+}
+
+/* String */
+pre.textmate-source.cobalt .string .string_unquoted_heredoc .string {
+	color: #3AD900;
+}
+
+/* Comment */
+pre.textmate-source.cobalt .comment {
+	color: #0088FF;
+	font-style: italic;
+}
+
+/* Support */
+pre.textmate-source.cobalt .support {
+	color: #80FFBB;
+}
+
+/* Variable */
+pre.textmate-source.cobalt .variable {
+	color: #CCCCCC;
+}
+
+/* Lang Variable */
+pre.textmate-source.cobalt .variable_language {
+	color: #FF80E1;
+}
+
+/* Function Call */
+pre.textmate-source.cobalt .meta_function-call {
+	color: #FFEE80;
+}
+
+/* Invalid */
+pre.textmate-source.cobalt .invalid {
+	color: #F8F8F8;
+	background-color: #800F00;
+}
+
+/* Embedded Source */
+pre.textmate-source.cobalt .text .source, pre.textmate-source.cobalt .string_unquoted_heredoc, pre.textmate-source.cobalt .source .source {
+	color: #FFFFFF;
+	background-color: #223545;
+}
+
+/* Entity inherited-class */
+pre.textmate-source.cobalt .entity_other_inherited-class {
+	color: #80FCFF;
+	font-style: italic;
+}
+
+/* String embedded-source */
+pre.textmate-source.cobalt .string_quoted .source {
+	color: #9EFF80;
+}
+
+/* String constant */
+pre.textmate-source.cobalt .string .constant {
+	color: #80FF82;
+}
+
+/* String.regexp */
+pre.textmate-source.cobalt .string_regexp {
+	color: #80FFC2;
+}
+
+/* String variable */
+pre.textmate-source.cobalt .string .variable {
+	color: #EDEF7D;
+}
+
+/* Support.function */
+pre.textmate-source.cobalt .support_function {
+	color: #FFB054;
+}
+
+/* Support.constant */
+pre.textmate-source.cobalt .support_constant {
+	color: #EB939A;
+}
+
+/* Exception */
+pre.textmate-source.cobalt .support_type_exception {
+	color: #FF1E00;
+}
+
+/* C/C++ Preprocessor Line */
+pre.textmate-source.cobalt .meta_preprocessor_c {
+	color: #8996A8;
+}
+
+/* C/C++ Preprocessor Directive */
+pre.textmate-source.cobalt .meta_preprocessor_c .keyword {
+	color: #AFC4DB;
+}
+
+/* Doctype/XML Processing */
+pre.textmate-source.cobalt .meta_sgml_html .meta_doctype, pre.textmate-source.cobalt .meta_sgml_html .meta_doctype .entity, pre.textmate-source.cobalt .meta_sgml_html .meta_doctype .string, pre.textmate-source.cobalt .meta_xml-processing, pre.textmate-source.cobalt .meta_xml-processing .entity, pre.textmate-source.cobalt .meta_xml-processing .string {
+	color: #73817D;
+}
+
+/* Meta.tag.A */
+pre.textmate-source.cobalt .meta_tag, pre.textmate-source.cobalt .meta_tag .entity {
+	color: #9EFFFF;
+}
+
+/* css tag-name */
+pre.textmate-source.cobalt .meta_selector_css .entity_name_tag {
+	color: #9EFFFF;
+}
+
+/* css#id */
+pre.textmate-source.cobalt .meta_selector_css .entity_other_attribute-name_id {
+	color: #FFB454;
+}
+
+/* css.class */
+pre.textmate-source.cobalt .meta_selector_css .entity_other_attribute-name_class {
+	color: #5FE461;
+}
+
+/* css property-name: */
+pre.textmate-source.cobalt .support_type_property-name_css {
+	color: #9DF39F;
+}
+
+/* css property-value; */
+pre.textmate-source.cobalt .meta_property-group .support_constant_property-value_css, pre.textmate-source.cobalt .meta_property-value .support_constant_property-value_css {
+	color: #F6F080;
+}
+
+/* css @at-rule */
+pre.textmate-source.cobalt .meta_preprocessor_at-rule .keyword_control_at-rule {
+	color: #F6AA11;
+}
+
+/* css additional-constants */
+pre.textmate-source.cobalt .meta_property-value .support_constant_named-color_css, pre.textmate-source.cobalt .meta_property-value .constant {
+	color: #EDF080;
+}
+
+/* css constructor.argument */
+pre.textmate-source.cobalt .meta_constructor_argument_css {
+	color: #EB939A;
+}
+
+/* diff.header */
+pre.textmate-source.cobalt .meta_diff, pre.textmate-source.cobalt .meta_diff_header {
+	color: #F8F8F8;
+	background-color: #000E1A;
+}
+
+/* diff.deleted */
+pre.textmate-source.cobalt .markup_deleted {
+	color: #F8F8F8;
+	background-color: #4C0900;
+}
+
+/* diff.changed */
+pre.textmate-source.cobalt .markup_changed {
+	color: #F8F8F8;
+	background-color: #806F00;
+}
+
+/* diff.inserted */
+pre.textmate-source.cobalt .markup_inserted {
+	color: #F8F8F8;
+	background-color: #154F00;
+}
+
+/* Raw Markup */
+pre.textmate-source.cobalt .markup_raw {
+	background-color: rgba(143, 221, 246, 0.19);
+}
+
+/* Block Quote */
+pre.textmate-source.cobalt .markup_quote {
+	background-color: #004480;
+}
+
+/* List */
+pre.textmate-source.cobalt .markup_list {
+	background-color: #130D26;
+}
+
+/* Bold Markup */
+pre.textmate-source.cobalt .markup_bold {
+	color: #C1AFFF;
+	font-weight: bold;
+}
+
+/* Italic Markup */
+pre.textmate-source.cobalt .markup_italic {
+	color: #B8FFD9;
+	font-style: italic;
+}
+
+/* Heading Markup */
+pre.textmate-source.cobalt .markup_heading {
+	color: #C8E4FD;
+	font-weight: bold;
+	background-color: #001221;
 }

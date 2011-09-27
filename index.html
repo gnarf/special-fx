@@ -8,7 +8,7 @@
 	<link rel="stylesheet" href="deck.js/themes/style/neon.css" type="text/css">
 	<link rel="stylesheet" href="deck.js/themes/transition/fade.css" type="text/css">
 	<link rel="stylesheet" href="css.css" type="text/css">
-	<script src="/deck.js/modernizr.custom.js"></script>
+	<script src="deck.js/modernizr.custom.js"></script>
 </head>
 <body class="deck-container">
 
@@ -153,7 +153,148 @@
 	</div>
 </div>
 
+<div class="slide" id="what-is-a-timer">
+	<h2>What is a timer?</h2>
+	<ul>
+		<li>Used <strong>internally</strong> to track the state of animation</li>
+		<li>Per <strong>property</strong></li>
+		<li><code>new jQuery.fx( elem, options, property)</code></li>
+		<li>After creation, pushes a function to <code>jQuery.timers</code> array</li>
+		<li>Defines functions to set/get property that is being animated</li>
+	</ul>
+</div>
 
+<div class="slide" id="fx-methods">
+	<h2><code>jQuery.fx</code><br/>Internal Properties and Methods</h2>
+	<ul>
+		<li><code>interval</code> - delay between frames - defaults to 13</li>
+		<li><code>tick()</code> - Loops over <code>jQuery.timers</code> - Removing as they complete</li>
+		<li><code>stop()</code> - <code>clearInterval()</code></li>
+		<li><code>speeds</code> - Stores default speeds <br><code>{ slow: 600, fast: 200, _default: 400 }</code></li>
+		<li><code>step</code> - Stores functions to allow "hooks" per property
+			<ul>
+				<li>opacity - forces using jQuery.style instead of fx.elem.style</li>
+				<li>width/height - don't allow negative numbers</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+<div class="slide" id="fx-prototype">
+	<h2><code>jQuery.fx.prototype</code><br/>Internal 'tween' management</h2>
+	<ul>
+		<li><code>cur()</code> - Read current value from style using <code>jQuery.css</code></li>
+		<li><code>update()</code> - Sets the value using step function</li>
+		<li><code>custom( from, to, unit )</code> - Setup start/end and start animating
+			<ul>
+				<li>Create function to call <code>self.step( gotoEnd )</code> and pushes it to <code>jQuery.timers</code></li>
+				<li>If the timer loop isn't already running <code>setInterval</code> / <code>requestAnimationFrame</code></li>
+			</ul>
+		</li>
+		<li><code>hide()</code> - Store some info / call <code>custom( this.cur(), 0 )</code></li>
+		<li><code>show()</code> - Store some info / call <code>custom( 0/1, this.cur() )</code></li>
+		<li><code>step( gotoEnd )</code> - Heavy Lifting.
+			<ul>
+				<li>Calculates current position and sets</li>
+				<li>Checks for completed animations</li>
+				<li>Returns false when completed</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+<div class="slide" id="easing">
+	<h2><code>jQuery.easing</code><br>Easing functions</h2>
+	<ul>
+		<li>By default provides <code>swing</code> and <code>linear</code></li>
+		<li><code>function ( position, time, min, max )</code>
+			<ul>
+				<li>position from 0.0 -> 1.0</li>
+				<li>time is ms from start</li>
+				<li>min and max might have been used once, but are now always 0 -> 1</li>
+			</ul>
+		</li>
+		<li>Further extended by other plugins</li>
+	</ul>
+</div>
+
+<div class="slide" id="speed">
+	<h2><code>jQuery.speed()</code><br>Internal Helper</h2>
+	<ul>
+		<li>Takes the possible arguments for ALL animation functions<br>
+			<code>( speed, easing, callback )</code>
+		</li>
+		<li>
+			speed can be an "options object" to start with
+		</li>
+		<li>Returns an animation "options object"
+			<ul>
+				<li><code>duration</code> - normalized to a number</li>
+				<li><code>complete</code> - normalized to call callback, then dequeue</li>
+				<li><code>easing</code></li>
+			</ul>
+		</li>
+		<li>Other valid options not given a named parameter
+			<ul>
+				<li><code>queue</code> - Name of the queue to use (1.7), or false to disable queue</li>
+			</ul>
+		</li>
+	</ul>
+</div>
+
+<div class="slide" id="animate">
+	<h2><code>jQuery.fn.animate()</code><br>One interface to rule them all</h2>
+	<ul>
+		<li><code>jQuery.fn.animate( prop, speed, easing, callback )</code></li>
+		<li><code>options = jQuery.speed( speed, easing, callback )</code></li>
+		<li>Defines a function that will begin the animation: <code>doAnimation</code></li>
+		<li>Calls <code>.queue( name, doAnimation )</code> or <code>.each( doAnimation )</code></li>
+	</ul>
+	<h3><code>doAnimation</code></h3>
+	<p>Called for each element - Loops over all properties</p>
+	<ul>
+		<li>Normalize names (camelCase)</li>
+		<li>Per-Property Easing <code>{ prop: [ value, easing ] }</code></li>
+		<li>Creates a timer</li>
+		<li><code>"show"</code> <code>"hide"</code> and <code>"toggle"</code> call appropriate function on the timer.</li>
+		<li>All others, calculate current/end values and call the <code>custom</code> method on the timer.</li>
+	</ul>
+</div>
+
+<div class="slide" id="stop">
+	<h2><code>jQuery.fn.stop()</code></h2>
+	<ul>
+		<li><code>( clearQueue, gotoEnd, queue )</code> (queue option 1.7+)</li>
+		<li>Empties the queue if <code>clearQueue</code></li>
+		<li>Stops (removes) all <code>jQuery.timers</code> related to the element and queue.</li>
+		<li>When <code>gotoEnd</code> - call the timers with <code>gotoEnd</code> to force the last frame</li>
+		<li>1.7 - Calls stop handle of currently running queue function</li>
+	</ul>
+</div>
+
+<div class="slide" id="helpers">
+	<h2>Animation Helpers / Shortcuts</h2>
+	<p><code>hide, show, toggle,<br>slideDown, slideUp, slideToggle,<br>fadeIn, fadeOut, fadeToggle</code></p>
+	<p>Creates function that call <code>animate()</code> using specific properties</p>
+<pre class="textmate-source cobalt"><span class="source source_js"><span class="comment comment_line comment_line_double-slash comment_line_double-slash_js"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_js">//</span> Generate shortcuts for custom animations
+</span>jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>each<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span><span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+    slideDown: genFx<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> <span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>show<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="constant constant_numeric constant_numeric_js">1</span> <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">,</span>
+    slideUp: genFx<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> <span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>hide<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="constant constant_numeric constant_numeric_js">1</span> <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">,</span>
+    slideToggle: genFx<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> <span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>toggle<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="constant constant_numeric constant_numeric_js">1</span> <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">,</span>
+    fadeIn: <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span> opacity: <span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>show<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">,</span>
+    fadeOut: <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span> opacity: <span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>hide<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">,</span>
+    fadeToggle: <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span> opacity: <span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>toggle<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span>
+<span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="storage storage_type storage_type_js">function</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> name<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>props <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+    jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>fn<span class="meta meta_brace meta_brace_square meta_brace_square_js">[</span> name <span class="meta meta_brace meta_brace_square meta_brace_square_js">]</span> <span class="keyword keyword_operator keyword_operator_js">=</span> <span class="storage storage_type storage_type_js">function</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> speed<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>easing<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>callback <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+        <span class="keyword keyword_control keyword_control_js">return</span> <span class="variable variable_language variable_language_js">this</span><span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>animate<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> props<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>speed<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>easing<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>callback <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+    <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+<span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span></span></pre>
+<p><code>hide</code>, <code>show</code> and <code>toggle</code> all contain a similar line of code:</p>
+<pre class="textmate-source cobalt"><span class="source source_js"><span class="meta meta_function meta_function_json meta_function_json_js"><span class="entity entity_name entity_name_function entity_name_function_js">hide</span>: <span class="storage storage_type storage_type_function storage_type_function_js">function</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_begin punctuation_definition_parameters_begin_js">(</span><span class="variable variable_parameter variable_parameter_function variable_parameter_function_js"> speed, easing, callback </span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_end punctuation_definition_parameters_end_js">)</span></span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+    <span class="keyword keyword_control keyword_control_js">if</span> <span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> speed <span class="keyword keyword_operator keyword_operator_js">||</span> speed <span class="keyword keyword_operator keyword_operator_js">===</span> <span class="constant constant_numeric constant_numeric_js">0</span> <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+        <span class="keyword keyword_control keyword_control_js">return</span> <span class="variable variable_language variable_language_js">this</span><span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>animate<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> genFx<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span><span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>hide<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="constant constant_numeric constant_numeric_js">3</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>speed<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>easing<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>callback<span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+</span></pre>
+</div>
 <a href="." title="Permalink to this slide" class="deck-permalink">#</a>
 <script src="jquery.min.js"></script>
 <script src="deck.js/core/deck.core.js"></script>

@@ -1,7 +1,19 @@
+.csstransitions.csstransforms .deck-container:not(.deck-menu) > .slide {
+	padding: 0;
+}
 .deck-container h1 sub {
 	display: block;
 	line-height: 1.25em;
 	font-size: 45%;
+}
+
+.deck-container h2 code,
+.deck-container h3 code {
+	text-shadow: 0 0 15px #E3B64B, 0 0 2px #fff;
+}
+
+.deck-container ul ul {
+	margin-bottom: 0;
 }
 
 .deck-container code {

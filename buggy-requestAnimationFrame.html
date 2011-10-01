@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Special.fx(): Buggy rAF</title>
+</head>
+<body>
+	<div id="elem">
+		This is just some text, its going to repeat a simple animation
+	</div>
+
+<script src="jquery-1.6.1.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+	var elem = $( "#elem" );
+	setInterval(function() {
+		elem.toggle( 500 );
+	}, 1000);
+</script>
+</body>

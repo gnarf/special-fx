@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Special.fx(): Class Animation Demo</title>
+	<style>
+		div {
+			width: 400px;
+			height: 200px;
+			background-color: #bada55;
+			color: #000;
+		  -webkit-transition: all 1s ease-out;
+		     -moz-transition: all 1s ease-out;
+		      -ms-transition: all 1s ease-out;
+		       -o-transition: all 1s ease-out;
+		          transition: all 1s ease-out;
+		}
+
+		div:hover,
+		div.hover {
+			background-color: #000;
+			color: #bada55;
+			padding: 30px;
+			width: 340px;
+			height: 140px;
+		}
+	</style>
+</head>
+<body>
+<div>OMG CONTENT</div>
+<script src="modernizr.js"></script>
+<script src="jquery.min.js"></script>
+<script src="jquery.effects.core.js"></script>
+<script>
+	if ( !Modernizr.csstransitions ) {
+		$( "div" ).hover( function( event ) {
+			$( this ).addClass( "hover", 1000 );
+		}, function( event ) {
+			$( this ).removeClass( "hover", 1000 );
+		});
+	}
+</script>
+</body>

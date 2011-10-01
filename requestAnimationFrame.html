@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Special.fx(): Corrected requestAnimationFrame</title>
+</head>
+<body>
+	<div id="elem">
+		This is just some text, its going to fade in and out....
+	</div>
+
+<script src="jquery-1.6.1.min.js"></script>
+<script type="text/javascript" charset="utf-8">
+	var elem = $( "#elem" );
+	// setInterval(function() {
+	// 	elem.fadeToggle( 500 );
+	// }, 1000);
+	function doTheAnimation() {
+		// we should use the callback of the animation instead of an interval!
+		elem.fadeToggle( 500, function() {
+			setTimeout( doTheAnimation, 500 );
+		});
+	}
+	
+	doTheAnimation();
+</script>
+</body>

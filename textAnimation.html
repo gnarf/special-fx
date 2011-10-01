@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Special.fx(): Buggy RequestAnimation Frame</title>
+	<style>
+		p {
+			width: 400px;
+			background: black;
+			color: white;
+		}
+		button {
+			border: 1px solid #fff;
+			background: black;
+			color: #bada55;
+		}
+	</style>
+</head>
+<body>
+<button>Play</button>
+<p>Your bones don't break, mine do. That's clear. Your cells react to bacteria and viruses differently than mine. You don't get sick, I do. That's also clear. But for some reason, you and I react the exact same way to water. We swallow it too fast, we choke. We get some in our lungs, we drown. However unreal it may seem, we are connected, you and I. We're on the same curve, just on opposite ends.</p>
+<script src="jquery.min.js"></script>
+<script src="jquery.effects.core.js"></script>
+<script type="text/javascript" charset="utf-8">
+	// Thanks ben alman! - https://gist.github.com/1251291
+	$( "button" ).click(function() {
+		$( "p" ).each(function() {
+			var elem = $( this ),
+				text = elem.text();
+
+			// Set a completely made up CSS property on the element. While this does
+			// absolutely nothing visually (the browser ignores it), it's still a value
+			// that jQuery can animate.
+			elem.css({ fakeProperty: 0 })
+
+				// Animate that property from the current value (0) to the new value (1).
+				.animate({ fakeProperty: 1 }, {
+
+					// Animate over a few seconds.
+					duration: 10000,
+
+					// Using a custom easing function.
+					easing: "easeOutBounce",
+
+					// For each animation "tick" execute this function.
+					step: function( pct ) {
+						elem.text( text.substr( 0, Math.floor( text.length * pct ) ) );
+					}
+				});
+		});
+	});
+</script>

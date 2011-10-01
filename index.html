@@ -28,7 +28,7 @@
 </div>
 
 <div class="slide" id="overview">
-	<h2>API Overview</h2>
+	<h2>Overview</h2>
 	<ul>
 		<li>
 			<h3>jQuery Core</h3>
@@ -44,6 +44,11 @@
 			<ul>
 				<li>Animate Classes</li>
 				<li>Widget Effects</li>
+				<li>Also Includes
+					<ul>
+						<li>jQuery Color</li>
+						<li>Additional Easing</li>
+				</li>
 			</ul>
 		</li>
 	</ul>
@@ -84,13 +89,13 @@
 <div class="slide" id="fn-queue">
 	<h2>Queue</h2>
 	<p>Add a function to the end of the queue</p>
-	<code>jQuery.fn.queue( [ name, ] queueFunc( next ) )</code>
+	<code>jQuery.fn.queue( [ type, ] queueFunc( next ) )</code>
 	<ul>
 		<li><code>queueFunc( next )</code> is passed a function to call when you are done</li>
 		<li>Automatically starts the <code>"fx"</code> queue</li>
 		<li>Internally it calls....</li>
 	</ul>
-	<code>jQuery.queue( elem, name, data )</code>
+	<code>jQuery.queue( elem, type, data )</code>
 	<ul>
 		<li>Stores the function on the end of the queue</li>
 		<li>Can accept an array of functions - in which case it overwrites the queue</li>
@@ -101,11 +106,11 @@
 <div class="slide" id="fn-dequeue">
 	<h2>Dequeue</h2>
 	<p>Run the first function stored the queue</p>
-	<code>jQuery.fn.dequeue( [ name ] )</code>
+	<code>jQuery.fn.dequeue( [ type ] )</code>
 	<ul>
 		<li>Just passes all the work to...</li>
 	</ul>
-	<code>jQuery.dequeue( elem, [ name ] )</code>
+	<code>jQuery.dequeue( elem, [ type ] )</code>
 	<ul>
 		<li><code>shift()</code>'s a function off the queue</li>
 		<li>Executes your function, passing a function to call <code>jQuery.dequeue()</code></li>
@@ -128,9 +133,9 @@
     <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
 <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span>
 </span></pre>
-	<p>More on <code>jQuery.fx.speeds</code> later</p>
 </div>
 
+<!--
 <div class="slide" id="queue-promise">
 	<h2>Clearing the Queue</h2>
 	<code>$.fn.clearQueue( [ type ] )</code>
@@ -141,6 +146,7 @@
 		<li>Creates a <code>$.Deferred()</code> that will resolve when the queue <code>type</code> empties.</li>
 	</ul>
 </div>
+-->
 
 <div class="slide" id="effects-intro">
 	<h1>
@@ -158,7 +164,7 @@
 	<ul>
 		<li>Used <strong>internally</strong> to track the state of animation</li>
 		<li>Per <strong>property</strong></li>
-		<li><code>new jQuery.fx( elem, options, property)</code></li>
+		<li>Created inside <code>.animate()</code><br><code>new jQuery.fx( elem, options, property )</code></li>
 		<li>After creation, pushes a function to <code>jQuery.timers</code> array</li>
 		<li>Defines functions to set/get property that is being animated</li>
 	</ul>
@@ -167,19 +173,44 @@
 <div class="slide" id="fx-methods">
 	<h2><code>jQuery.fx</code><br/>Internal Properties and Methods</h2>
 	<ul>
-		<li><code>interval</code> - delay between frames - defaults to 13</li>
-		<li><code>tick()</code> - Loops over <code>jQuery.timers</code> - Removing as they complete</li>
-		<li><code>stop()</code> - <code>clearInterval()</code></li>
-		<li><code>speeds</code> - Stores default speeds <br><code>{ slow: 600, fast: 200, _default: 400 }</code></li>
-		<li><code>step</code> - Stores functions to allow "hooks" per property
+		<li>Public Stuff
+		<ul>
+			<li><code>off</code> - set to false to make all animations have 0 duration</li>
+			<li><code>step</code> - Stores functions to allow "hooks" per property
+				<ul>
+					<li>opacity - forces using jQuery.style instead of fx.elem.style</li>
+					<li>width/height - don't allow negative numbers</li>
+				</ul>
+			</li>
+			<li><code>speeds</code> - Stores default speeds <br><code>{ slow: 600, fast: 200, _default: 400 }</code></li>
+		</ul></li>
+		<li>Internal Stuff
 			<ul>
-				<li>opacity - forces using jQuery.style instead of fx.elem.style</li>
-				<li>width/height - don't allow negative numbers</li>
+				<li><code>interval</code> - delay between frames - defaults to 13</li>
+				<li><code>tick()</code> - Loops over <code>jQuery.timers</code> - Removing as they complete</li>
+				<li><code>stop()</code> - <code>clearInterval()</code></li>
 			</ul>
 		</li>
 	</ul>
 </div>
 
+<div class="slide" id="step-demo">
+	<h2>An example step function</h2>
+	<p>Copied from jQuery Color 2.0b1 - defines step hooks for color animation
+<pre class="textmate-source cobalt"><span class="source source_js"><span class="comment comment_line comment_line_double-slash comment_line_double-slash_js"><span class="punctuation punctuation_definition punctuation_definition_comment punctuation_definition_comment_js">//</span> hook = backgroundColor borderBottomColor borderLeftColor borderRightColor borderTopColor
+// color outlineColor
+</span>jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>step<span class="meta meta_brace meta_brace_square meta_brace_square_js">[</span> hook <span class="meta meta_brace meta_brace_square meta_brace_square_js">]</span> <span class="keyword keyword_operator keyword_operator_js">=</span> <span class="storage storage_type storage_type_js">function</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> fx <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+    <span class="keyword keyword_control keyword_control_js">if</span> <span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> <span class="keyword keyword_operator keyword_operator_js">!</span>fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>colorInit <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+        fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span><span class="support support_constant support_constant_dom support_constant_dom_js">start</span> <span class="keyword keyword_operator keyword_operator_js">=</span> color<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>elem<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>hook <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+        fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>end <span class="keyword keyword_operator keyword_operator_js">=</span> color<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>end <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+        fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>colorInit <span class="keyword keyword_operator keyword_operator_js">=</span> <span class="constant constant_language constant_language_boolean constant_language_boolean_true constant_language_boolean_true_js">true</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+    <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span>
+    jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>cssHooks<span class="meta meta_brace meta_brace_square meta_brace_square_js">[</span> hook <span class="meta meta_brace meta_brace_square meta_brace_square_js">]</span><span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>set<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>elem<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span><span class="support support_constant support_constant_dom support_constant_dom_js">start</span><span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>transition<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>end<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>pos <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span> <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+<span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+</span></pre>
+</div>
+
+<!--
 <div class="slide" id="fx-prototype">
 	<h2><code>jQuery.fx.prototype</code><br/>Internal 'tween' management</h2>
 	<ul>
@@ -202,12 +233,13 @@
 		</li>
 	</ul>
 </div>
+-->
 
 <div class="slide" id="easing">
 	<h2><code>jQuery.easing</code><br>Easing functions</h2>
 	<ul>
 		<li>By default provides <code>swing</code> and <code>linear</code></li>
-		<li><code>function ( position, time, min, max )</code>
+		<li><code>function ( position, time, min, max, duration )</code>
 			<ul>
 				<li>position from 0.0 -> 1.0</li>
 				<li>time is ms from start</li>
@@ -219,7 +251,7 @@
 </div>
 
 <div class="slide" id="speed">
-	<h2><code>jQuery.speed()</code><br>Internal Helper</h2>
+	<h2><code>jQuery.speed()</code><br>Internal Options Helper</h2>
 	<ul>
 		<li>Takes the possible arguments for ALL animation functions<br>
 			<code>( speed, easing, callback )</code>
@@ -237,6 +269,7 @@
 		<li>Other valid options not given a named parameter
 			<ul>
 				<li><code>queue</code> - Name of the queue to use (1.7), or false to disable queue</li>
+				<li><code>step</code> - Overrides the default "step" function</li>
 			</ul>
 		</li>
 	</ul>
@@ -248,7 +281,7 @@
 		<li><code>jQuery.fn.animate( prop, speed, easing, callback )</code></li>
 		<li><code>options = jQuery.speed( speed, easing, callback )</code></li>
 		<li>Defines a function that will begin the animation: <code>doAnimation</code></li>
-		<li>Calls <code>.queue( name, doAnimation )</code> or <code>.each( doAnimation )</code></li>
+		<li>Calls <code>.queue( type, doAnimation )</code> or <code>.each( doAnimation )</code></li>
 	</ul>
 	<h3><code>doAnimation</code></h3>
 	<p>Called for each element - Loops over all properties</p>
@@ -264,13 +297,25 @@
 <div class="slide" id="stop">
 	<h2><code>jQuery.fn.stop()</code></h2>
 	<ul>
-		<li><code>( clearQueue, gotoEnd, queue )</code> (queue option 1.7+)</li>
+		<li><code>( clearQueue, gotoEnd )</code> (queue option 1.7+)</li>
 		<li>Empties the queue if <code>clearQueue</code></li>
 		<li>Stops (removes) all <code>jQuery.timers</code> related to the element and queue.</li>
 		<li>When <code>gotoEnd</code> - call the timers with <code>gotoEnd</code> to force the last frame</li>
-		<li>1.7 - Calls stop handle of currently running queue function</li>
+		<li>1.7 - Calls stop handle of currently running queue functions too</li>
 	</ul>
-</div>
+		<h4>Now in 1.7...</h4>
+<pre class="textmate-source cobalt"><span class="source source_js"><span class="meta meta_function meta_function_json meta_function_json_js"><span class="entity entity_name entity_name_function entity_name_function_js">delay</span>: <span class="storage storage_type storage_type_function storage_type_function_js">function</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_begin punctuation_definition_parameters_begin_js">(</span><span class="variable variable_parameter variable_parameter_function variable_parameter_function_js"> time, type </span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_end punctuation_definition_parameters_end_js">)</span></span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+    time <span class="keyword keyword_operator keyword_operator_js">=</span> jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>fx ? jQuery<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>fx<span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>speeds<span class="meta meta_brace meta_brace_square meta_brace_square_js">[</span> time <span class="meta meta_brace meta_brace_square meta_brace_square_js">]</span> <span class="keyword keyword_operator keyword_operator_js">||</span> time : time<span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+    type <span class="keyword keyword_operator keyword_operator_js">=</span> type <span class="keyword keyword_operator keyword_operator_js">||</span> <span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>fx<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+
+    <span class="keyword keyword_control keyword_control_js">return</span> <span class="variable variable_language variable_language_js">this</span><span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>queue<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> type<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="storage storage_type storage_type_js">function</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> next<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>runner <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+        <span class="storage storage_type storage_type_js">var</span> timeout <span class="keyword keyword_operator keyword_operator_js">=</span> <span class="support support_function support_function_js">setTimeout</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> next<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>time <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+        <span class="meta meta_function meta_function_js"><span class="support support_class support_class_js">runner</span>.<span class="entity entity_name entity_name_function entity_name_function_js">stop</span> <span class="keyword keyword_operator keyword_operator_js">=</span> <span class="storage storage_type storage_type_function storage_type_function_js">function</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_begin punctuation_definition_parameters_begin_js">(</span><span class="punctuation punctuation_definition punctuation_definition_parameters punctuation_definition_parameters_end punctuation_definition_parameters_end_js">)</span></span> <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">{</span>
+            <span class="support support_function support_function_js">clearTimeout</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> timeout <span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+        <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+    <span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
+<span class="meta meta_brace meta_brace_curly meta_brace_curly_js">}</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">,</span>
+</span></pre></div>
 
 <div class="slide" id="helpers">
 	<h2>Animation Helpers / Shortcuts</h2>
@@ -295,6 +340,82 @@
         <span class="keyword keyword_control keyword_control_js">return</span> <span class="variable variable_language variable_language_js">this</span><span class="meta meta_delimiter meta_delimiter_method meta_delimiter_method_period meta_delimiter_method_period_js">.</span>animate<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span> genFx<span class="meta meta_brace meta_brace_round meta_brace_round_js">(</span><span class="string string_quoted string_quoted_double string_quoted_double_js"><span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_begin punctuation_definition_string_begin_js">"</span>hide<span class="punctuation punctuation_definition punctuation_definition_string punctuation_definition_string_end punctuation_definition_string_end_js">"</span></span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span><span class="constant constant_numeric constant_numeric_js">3</span><span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>speed<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>easing<span class="meta meta_delimiter meta_delimiter_object meta_delimiter_object_comma meta_delimiter_object_comma_js">, </span>callback<span class="meta meta_brace meta_brace_round meta_brace_round_js">)</span><span class="punctuation punctuation_terminator punctuation_terminator_statement punctuation_terminator_statement_js">;</span>
 </span></pre>
 </div>
+
+<div class="slide" id="ui-intro">
+	<h1>
+		jquery.effects.core.js
+		<sub>jQuery UI Effects</sub>
+	</h1>
+	<div class="bottom-right">
+		<h3>jQuery UI</h3>
+		<h4>/ui/jquery.effects.core.js</h4>
+	</div>
+</div>
+
+<div class="slide" id="ui-includes">
+	<h2>jQuery UI Effects?</h2>
+	<ul>
+		<li>Standalone</li>
+		<li>Adds animation to <code>addClass()</code>, <code>removeClass()</code> and <code>toggleClass()</code><br>
+			<code>elem.addClass( "testing", 200 );</code>
+		</li>
+		<li>Effects Library</li>
+		<li>Bakes in:
+			<ul>
+				<li>Color <sub>(v2 in beta)</sub></li>
+				<li>Easing Functions</li>
+			</ul>
+		</li>
+	<ul>
+</div>
+
+<div class="slide" id="ui-effects">
+	<h2>Effects Library</h2>
+	<ul>
+		<li>Main use is for the hide and show of widgets</li>
+		<li>Can be used with <code>.hide( "effect", duration, easing, callback )</code>, also show, toggle</li>
+		<li>Some major refactoring in 1.9</li>
+	</ul>
+</div>
+
+<div class="slide" id="ui-effects-2">
+	<h2>Effects Library</h2>
+	<iframe src="http://view.jqueryui.com/master/tests/visual/effects/effects.all.html" height="400" style="width: 100%; height: 400px overflow: none"></iframe>
+	
+</div>
+
+<div class="slide" id="class-animations">
+	<h2>Class Animation or CSS3 Transitions?</h2>
+	<iframe src="classDemo.html" height="400" style="width: 100%; height: 400px overflow: none"></iframe>
+</div>
+
+<div class="slide" id="text-animation">
+	<h2>A WTF Text Demo</h2>
+	<iframe src="textAnimation.html" height="400" style="width: 100%; height: 400px overflow: none"></iframe>
+	<sub>Thanks to Ben "Cowboy" Alman for the demo.  Thanks to slipsum.com for the Samuel L Ipsum</sub>
+</div>
+
+<div class="slide" id="requestAnimationFrame">
+	<h2>requestAnimationFrame</h2>
+	<ul>
+		<li>We all like it</li>
+		<li>But we hate the bug!</li>
+	</ul>
+</div>
+
+<div class="slide" id="queue-toggle">
+	<h2>Queued toggling</h2>
+</div>
+
+
+<div class="slide" id="whats-next">
+	<h2>How can make this better?</h2>
+	<ul>
+		<li>Core 1.8 Animation Refactoring</li>
+		<li></li>
+	</ul>
+</div>
+
 <a href="." title="Permalink to this slide" class="deck-permalink">#</a>
 <script src="jquery.min.js"></script>
 <script src="deck.js/core/deck.core.js"></script>
